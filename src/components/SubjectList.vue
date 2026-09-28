@@ -10,7 +10,6 @@
       </tr>
     </thead>
     <tbody>
-
       <tr v-for="(subject, index) in subjects" :key="index">
         <td class="text-left">{{ subject.name }}</td>
         <td class="text-right">{{ subject.credit }}</td>
@@ -19,7 +18,13 @@
           {{ subject.grade }}
         </td>
         <td class="text-center">
-          <q-btn flat dense icon="delete" color="negative" @click="$emit('delete-subject', index)" />
+          <q-btn
+            flat
+            dense
+            icon="delete"
+            color="negative"
+            @click="$emit('delete-subject', index)"
+          />
         </td>
       </tr>
     </tbody>
@@ -27,13 +32,12 @@
 </template>
 
 <script setup>
-
 defineProps({
   subjects: {
     type: Array,
-    required: true
-  }
-});
+    required: true,
+  },
+})
 
-defineEmits(['delete-subject']);
+defineEmits(['delete-subject'])
 </script>

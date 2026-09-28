@@ -1,55 +1,50 @@
 <template>
-  <q-card flat bordered class="q-mb-md">
-    <q-form ref="myForm" class="row q-col-gutter-sm item-start">
-      <div class="col-12 col-md-4">
+  <q-card flat bordered>
+    <q-card-section>
+      <q-form ref="myForm" class="q-gutter-md">
         <q-input
-          outlined
           v-model="form.name"
-          label="ชื่อวิขา"
+          label="ชื่อวิชา"
+          filled
           :rules="[(val) => !!val || 'กรุณากรอกชื่อวิชา']"
         />
-      </div>
-      <div class="col-12 col-md-4">
-        <q-input>
-          <q-input
-            outlined
-            type="number"
-            v-model.number="form.credit"
-            label="หน่วยกิต"
-            :rules="[
-              (val) => (val !== null && val !== '') || 'กรุณากรอกหน่วยกิต',
-              (val) => (val > 0 && val <= 10) || 'หน่วยกิตต้องอยู่ระหว่าง 1-10',
-            ]"
-          />
-        </q-input>
-      </div>
-      <div class="col-12 col-md-3">
+
         <q-input
-          outlined
+          v-model.number="form.credit"
           type="number"
+          label="หน่วยกิต"
+          filled
+          :rules="[
+            (val) => (val !== null && val !== '') || 'กรุณากรอกหน่วยกิต',
+            (val) => (val > 0 && val <= 10) || 'หน่วยกิตต้องอยู่ระหว่าง 1-10',
+          ]"
+        />
+
+        <q-input
           v-model.number="form.score"
+          type="number"
           label="คะแนน (0-100)"
+          filled
           :rules="[
             (val) => (val !== null && val !== '') || 'กรุณากรอกคะแนน',
             (val) => (val >= 0 && val <= 100) || 'คะแนนต้องอยู่ระหว่าง 0-100',
           ]"
         />
-      </div>
-      <div class="col-12 col-md-2">
-        <q-input outlined v-model="previewGrade" label="เกรด" readonly class="bg-grey-1" />
-      </div>
-      <div class="col-12 q-mt-sm">
+
+        <q-input v-model="previewGrade" label="เกรดที่ได้ (พรีวิว)" filled readonly />
+
         <q-btn
+          :ripple="false"
           color="primary"
+          label="เพิ่มรายวิชา"
           class="full-width"
-          icon="add_circle"
-          label="เพิ่มวิชาลงในรายการ"
           @click="submitForm"
         />
-      </div>
-    </q-form>
+      </q-form>
+    </q-card-section>
   </q-card>
 </template>
+
 <script setup>
 import { ref, watch, nextTick } from 'vue'
 
@@ -58,11 +53,11 @@ const myForm = ref(null)
 
 const form = ref({
   name: '',
-  credit: null,
-  score: null,
+  credit: 0,
+  score: 0,
 })
+
 const previewGrade = ref('')
-const previewPoint = ref(0)
 
 const calculateGrade = (score) => {
   if (score >= 80) return { grade: 'A', point: 4.0 }
@@ -76,15 +71,13 @@ const calculateGrade = (score) => {
 }
 
 watch(
-  () => form.value.score,
-  (newScore) => {
+  () => [form.value.score, form.value.credit],
+  ([newScore]) => {
     if (newScore !== null && newScore >= 0 && newScore <= 100) {
-      const result = calculateGrade(newScore)
-      previewGrade.value = result.grade
-      previewPoint.value = result.point
+      const { grade } = calculateGrade(newScore)
+      previewGrade.value = newScore > 0 || form.value.credit > 0 ? grade : ''
     } else {
       previewGrade.value = ''
-      previewPoint.value = 0
     }
   },
 )
@@ -93,16 +86,18 @@ const submitForm = () => {
   if (myForm.value) {
     myForm.value.validate().then(async (success) => {
       if (success) {
+        const { grade, point } = calculateGrade(form.value.score)
         emit('add-subject', {
           name: form.value.name,
           credit: Number(form.value.credit),
           score: Number(form.value.score),
-          grade: previewGrade.value,
-          point: previewPoint.value,
+          grade,
+          point,
         })
 
-        form.value = { name: '', credit: null, score: null }
+        form.value = { name: '', credit: 0, score: 0 }
         previewGrade.value = ''
+
         await nextTick()
         myForm.value.resetValidation()
       }

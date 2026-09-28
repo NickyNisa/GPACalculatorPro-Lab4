@@ -6,8 +6,29 @@
       <div class="text-subtitle1 text-grey-6">ระบบคำนวณและบันทึกเกรดเฉลี่ยรายภาคเรียน</div>
     </div>
     <GpaForm @add-subject="addSubject" />
+    <SubjectList
+      :subjects="subjects"
+      @delete-subject="deleteSubject"
+      @clear-all="clearAllSubjects"
+    />
   </q-page>
 </template>
 <script setup>
+import { ref } from 'vue'
 import GpaForm from './GpaForm.vue'
+import SubjectList from '@/components/SubjectList.vue'
+
+const subjects = ref([])
+
+const addSubject = (newSubject) => {
+  subjects.value.push(newSubject)
+}
+
+const deleteSubject = (index) => {
+  subjects.value.splice(index, 1)
+}
+
+const clearAllSubjects = () => {
+  subjects.value = []
+}
 </script>

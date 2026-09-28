@@ -11,12 +11,14 @@
       @delete-subject="deleteSubject"
       @clear-all="clearAllSubjects"
     />
+    <SummaryCard :subjects="subjects" />
   </q-page>
 </template>
 <script setup>
 import { ref } from 'vue'
 import GpaForm from './GpaForm.vue'
 import SubjectList from '@/components/SubjectList.vue'
+import SummaryCard from '@/components/SummaryCard.vue'
 
 const subjects = ref([])
 

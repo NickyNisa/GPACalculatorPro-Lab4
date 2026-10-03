@@ -3,7 +3,7 @@ const routes = [
     path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('@/pages/GpaApp.vue') },
+      { path: '', component: () => import('@/pages/GpaApp.vue'), meta: { requiresAuth: true } },
       { path: 'second', component: () => import('@/pages/SecondPage.vue') },
       {
         path: 'login',

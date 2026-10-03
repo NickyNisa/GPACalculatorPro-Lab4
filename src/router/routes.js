@@ -5,6 +5,11 @@ const routes = [
     children: [
       { path: '', component: () => import('@/pages/GpaApp.vue') },
       { path: 'second', component: () => import('@/pages/SecondPage.vue') },
+      {
+        path: 'login',
+        component: () => import('@/pages/LoginPage.vue'),
+        meta: { requiresAuth: false },
+      },
     ],
   },
 
